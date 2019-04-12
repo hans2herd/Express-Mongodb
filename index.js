@@ -37,6 +37,11 @@ app.delete('/', async (req, res) => {
     return res.status(200).send(await collection.find())
 })
 
+app.delete('/:id', async (req, res) => {
+    await collection.findOneAndDelete(req.params.id)
+    return res.status(200).send(await collection.find())
+})
+
 app.put('/:id', async (req, res) => {
     const result = await collection.findOneAndUpdate(req.params.id, req.body)
     return res.status(200).send(result)
