@@ -22,6 +22,11 @@ app.get('/', async (req, res) => {
     return res.status(200).send(result)
 })
 
+app.get('/:id', async (req, res) => {
+    const result = await collection.find(req.params.id)
+    return res.status(200).send(result)
+})
+
 app.post('/', async (req, res) => {
     const result = await collection.insert(req.body)
     return res.status(200).send(result)
@@ -32,9 +37,9 @@ app.delete('/', async (req, res) => {
     return res.status(200).send(await collection.find())
 })
 
-app.put('/', async (req, res) => {
-    const result = await collection.findOneAndUpdate(req.body)
-    return res.status(200).send(await result)
+app.put('/:id', async (req, res) => {
+    const result = await collection.findOneAndUpdate(req.params.id, req.body)
+    return res.status(200).send(result)
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
