@@ -5,7 +5,7 @@ const bodyParser = require("body-parser")
 const monk = require('monk')
 
 // Connection URL
-const url = 'mongodb://hanshherd:hans2herd@firstcluster-shard-00-00-3kte1.mongodb.net:27017,firstcluster-shard-00-01-3kte1.mongodb.net:27017,firstcluster-shard-00-02-3kte1.mongodb.net:27017/UserForm?ssl=true&replicaSet=FirstCluster-shard-0&authSource=admin&retryWrites=true';
+const url = 'mongodb://hanshherd:hans2herd@firstcluster-shard-00-00-3kte1.mongodb.net:27017,firstcluster-shard-00-01-3kte1.mongodb.net:27017,firstcluster-shard-00-02-3kte1.mongodb.net:27017/ShoppingCart?ssl=true&replicaSet=FirstCluster-shard-0&authSource=admin&retryWrites=true';
 
 const db = monk(url);
 
@@ -13,12 +13,18 @@ db.then(() => {
   console.log('Connected correctly to server')
 })
 
-const collection = db.get("UserForm")
+const items = db.get("Items")
+const cart = db.get("Cart")
 
 app.use(bodyParser.json())
 
-app.get('/', async (req, res) => {
-    const result = await collection.find({})
+app.get('/items', async (req, res) => {
+    const result = await items.find({})
+    return res.status(200).send(result)
+})
+
+app.get('/cart', async (req, res) => {
+    const result = await cart.find({})
     return res.status(200).send(result)
 })
 
@@ -28,22 +34,27 @@ app.get('/:id', async (req, res) => {
 })
 
 app.post('/', async (req, res) => {
-    const result = await collection.insert(req.body)
+    const result = await items.insert(req.body)
+    return res.status(200).send(result)
+})
+
+app.post('/', async (req, res) => {
+    const result = await cart.insert(req.body)
     return res.status(200).send(result)
 })
 
 app.delete('/', async (req, res) => {
-    await collection.findOneAndDelete(req.body)
+    await items.findOneAndDelete(req.body)
     return res.status(200).send(await collection.find())
 })
 
-app.delete('/:id', async (req, res) => {
-    await collection.findOneAndDelete(req.params.id)
+app.delete('/cart/:id', async (req, res) => {
+    await cart.findOneAndDelete(req.params.id)
     return res.status(200).send(await collection.find())
 })
 
-app.put('/:id', async (req, res) => {
-    const result = await collection.findOneAndUpdate(req.params.id, req.body)
+app.put('/items/:id', async (req, res) => {
+    const result = await items.findOneAndUpdate(req.params.id, req.body)
     return res.status(200).send(result)
 })
 
